@@ -1,10 +1,11 @@
-from django.contrib.auth import authenticate, login
 from django.http import HttpResponse
 from django.shortcuts import render
-from .forms import LoginForm, UserRegistrationForm, UserEditForm, ProfileEditForm
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from .models import Profile
 from django.contrib import messages
+from .forms import LoginForm, UserRegistrationForm, \
+                   UserEditForm, ProfileEditForm
+from .models import Profile
 
 
 def user_login(request):
@@ -18,19 +19,21 @@ def user_login(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    return HttpResponse('Аутентификация прошла успешно!')
+                    return HttpResponse('Authenticated successfully')
                 else:
-                    return HttpResponse('Недопустимый логин')
+                    return HttpResponse('Disabled account')
             else:
-                return HttpResponse('Неверный логин')
+                return HttpResponse('Invalid login')
     else:
         form = LoginForm()
     return render(request, 'account/login.html', {'form': form})
 
 
-@login_required  # проверяет аутентификацию
+@login_required
 def dashboard(request):
-    return render(request, 'account/dashboard.html', {'section': 'dashboard'})
+    return render(request,
+                  'account/dashboard.html',
+                  {'section': 'dashboard'})
 
 
 def register(request):
